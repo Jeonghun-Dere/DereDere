@@ -2,8 +2,9 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - ground
   layers:
   - Default
   - TransparentFX
@@ -11,7 +12,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - marker
   - 
   - 
   - 
@@ -41,3 +42,29 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: sky
+    uniqueID: 662073791
+    locked: 0
+  - name: playerFall
+    uniqueID: 3302286197
+    locked: 0
+  - name: ground
+    uniqueID: 3185866573
+    locked: 0
+  - name: player
+    uniqueID: 2001762207
+    locked: 0
+  - name: damageArea
+    uniqueID: 633678663
+    locked: 0
+  - name: item
+    uniqueID: 2333378645
+    locked: 0
+  - name: ui
+    uniqueID: 4019857315
+    locked: 0
+  - name: marker
+    uniqueID: 1268226583
+    locked: 0
+  m_RenderingLayers:
+  - Default
