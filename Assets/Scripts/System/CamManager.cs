@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace System.Manager {
+namespace Com.DEREDERE.System {
     public class CamManager : MonoBehaviour
     {
         public static CamManager main;

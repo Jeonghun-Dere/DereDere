@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 [Serializable]
@@ -23,11 +25,24 @@ public class NodeData : MonoBehaviour
     public SpriteRenderer nodeIcon;
     [HideInInspector]
     public NodeData head;
+    Text weightTxt;
     public List<NodeData> Child;
+    public Material defMat;
+
+    bool activated;
 
     void Start() {
         nodeIcon.gameObject.SetActive(true);
         DungeonController.Instance.nodes.Add(this);
+
+        var txt = Instantiate(defaultData.weightText);
+        Debug.Log(weightTxt);
+        txt.transform.SetParent(nodeIcon.transform);
+        txt.transform.localPosition = Vector2.zero;
+
+        weightTxt = txt.GetComponentInChildren<Text>();
+
+        defMat = nodeIcon.material;
 
         foreach (var child in Child) {
             child.head = this;
@@ -46,10 +61,28 @@ public class NodeData : MonoBehaviour
             if (Player.Local.transform.position.x > min.x && Player.Local.transform.position.y > min.y &&
                 Player.Local.transform.position.x < max.x && Player.Local.transform.position.y < max.y) {
                     nodeIcon.sprite = defaultData.ActiveNode;
+
+                    activated = true;
             } else {
                 nodeIcon.sprite = defaultData.DeActiveNode;
+
+                activated = false;
+            }
+
+            if (activated) {
+                if (Child.Count >= 2) {
+                    if (Player.Local.weight >= weight) {
+                        Child[1].nodeIcon.material = defaultData.flashWhite;
+                        Child[0].nodeIcon.material = defMat;
+                    } else {
+                        Child[1].nodeIcon.material = defMat;
+                        Child[0].nodeIcon.material = defaultData.flashWhite;
+                    }
+                }
             }
         }
+
+        weightTxt.text = weight.ToString();
     }
 
     void OnDrawGizmos() {
@@ -60,7 +93,7 @@ public class NodeData : MonoBehaviour
 
         #if UNITY_EDITOR
         UnityEditor.Handles.color = Color.white;
-        UnityEditor.Handles.Label( (Vector2)transform.position + center, "weight " + weight.ToString() );
+        UnityEditor.Handles.Label( (Vector2)transform.position + center, "weight " + weight.ToString());
         #endif
 
         foreach (var child in Child) {

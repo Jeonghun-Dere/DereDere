@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Com.DEREDERE.System;
 using UnityEngine;
 
 public class Player : EntityBase
@@ -10,10 +11,11 @@ public class Player : EntityBase
     GameObject item;
     #endregion
     #region public values
-    public float moveSpeed;
+    public float moveSpeed, stopMove;
     public bool grounded, isMoving;
     public bool falled;
     public GameObject target;
+    public int weight;
     #endregion
 
     #region Private values
@@ -47,7 +49,13 @@ public class Player : EntityBase
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
-        moveDelta = Vector2.up * v + Vector2.right * h;
+        if (stopMove > 0) {
+            moveDelta = Vector2.zero;
+            stopMove -= Time.deltaTime;
+        } else {
+            moveDelta = Vector2.up * v + Vector2.right * h;
+        }
+
         isMoving = moveDelta.x + moveDelta.y != 0;
 
         if (isMoving) {
@@ -111,7 +119,13 @@ public class Player : EntityBase
         LeanTween.moveLocal(item, itemOffset + new Vector2(0.25f * transform.localScale.x, 0.05f), 0.25f).setEasePunch();
         LeanTween.scale(item, Vector2.one * 0.44f, 0.1f).setEaseInCubic();
 
+        CamManager.main.Shake(6);
+
+        stopMove = 0.3f;
+
         yield return new WaitForSeconds(0.1f);
+
+        CamManager.main.Shake(0.8f, 0.3f);
 
         // LeanTween.moveLocal(item, itemOffset, 0.1f);
         LeanTween.scale(item, Vector2.one * 0.4f, 0.1f);

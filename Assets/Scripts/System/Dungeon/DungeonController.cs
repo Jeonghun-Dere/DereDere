@@ -7,7 +7,7 @@ public class DungeonController : MonoBehaviour
     public static DungeonController Instance {get; private set;}
     public List<NodeData> nodes;
     NodeData currentNode;
-    void Start()
+    void Awake()
     {
         Instance = this;
     }
