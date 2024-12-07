@@ -7,9 +7,10 @@ using UnityEngine.UI;
 
 [Serializable]
 public struct MonsterData {
-    public EntityBase monster;
+    public Enemy monster;
     public Vector2 spawnOffset;
     public int count, MaxCount;
+    public float spawnDelay;
 
 }
 
@@ -24,7 +25,7 @@ public class NodeData : MonoBehaviour
     public List<MonsterData> monsters;
     public SpriteRenderer nodeIcon;
     [HideInInspector]
-    public NodeData head;
+    public NodeData head, Next;
     Text weightTxt;
     public List<NodeData> Child;
     public Material defMat;
@@ -73,10 +74,16 @@ public class NodeData : MonoBehaviour
                     if (Player.Local.weight >= weight) {
                         Child[1].nodeIcon.material = defaultData.flashWhite;
                         Child[0].nodeIcon.material = defMat;
+
+                        Next = Child[1];
                     } else {
                         Child[1].nodeIcon.material = defMat;
                         Child[0].nodeIcon.material = defaultData.flashWhite;
+
+                        Next = Child[0];
                     }
+                } else if (Child.Count >= 1) {
+                    Next = Child[0];
                 }
             }
         }
@@ -102,7 +109,7 @@ public class NodeData : MonoBehaviour
         Gizmos.color = Color.green;
 
         foreach (var mob in monsters) {
-            Gizmos.DrawSphere(mob.spawnOffset, 0.2f);
+            Gizmos.DrawSphere((Vector2)transform.position + mob.spawnOffset, 0.2f);
         }
     }
 }

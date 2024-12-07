@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1268226583
-  m_SortingLayer: 9
+  m_SortingLayer: 10
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 67d35788d0d6a3344b079349cfcf6910, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -13966,12 +13966,15 @@ MonoBehaviour:
   center: {x: -4.55, y: -3.83}
   size: {x: 27.3, y: 25.3}
   monsters:
-  - monster: {fileID: 0}
+  - monster: {fileID: 4231220740129561462, guid: 7ca9e9df78d2d8247a9fe2f504ac1ddd, type: 3}
     spawnOffset: {x: -8.53, y: 5.08}
-    count: 0
+    count: 1
     MaxCount: 0
+    spawnDelay: 0
   nodeIcon: {fileID: 6102180948331398931}
   head: {fileID: 0}
+  Next: {fileID: 0}
   Child:
   - {fileID: 0}
   - {fileID: 0}
+  defMat: {fileID: 0}

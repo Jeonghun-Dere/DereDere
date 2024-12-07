@@ -15,7 +15,7 @@ public class Player : EntityBase
     public bool grounded, isMoving;
     public bool falled;
     public GameObject target;
-    public int weight;
+    public int weight, kill;
     #endregion
 
     #region Private values
@@ -27,6 +27,8 @@ public class Player : EntityBase
     [SerializeField]
     GameObject muzzle;
     #endregion
+
+    Cooldown dashCool = new(0.4f);
 
     void Start()
     {
@@ -168,6 +170,12 @@ public class Player : EntityBase
         StartCoroutine(dash());
     }
     IEnumerator dash() {
+        if (dashCool.IsIn()) {
+            yield break;
+        }
+
+        dashCool.Start();
+
         item.SetActive(false);
         rb.linearVelocity = moveDeltaBefore * 6;
         animator.SetTrigger("Dash");

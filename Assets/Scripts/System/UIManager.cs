@@ -10,7 +10,9 @@ namespace Com.DEREDERE.System {
         [SerializeField]
         Texture2D crosshair;
         [SerializeField]
-        Text weight;
+        Text weight, kill;
+        [SerializeField]
+        Slider hp;
 
         void Awake() {
             Instance = this;
@@ -21,6 +23,9 @@ namespace Com.DEREDERE.System {
         void Update() {
             if (Player.Local != null) {
                 weight.text = Player.Local.weight.ToString();
+                kill.text = Player.Local.kill.ToString();
+
+                hp.value = (float)Player.Local.health / Player.Local.maxHealth;
             }
         }
 

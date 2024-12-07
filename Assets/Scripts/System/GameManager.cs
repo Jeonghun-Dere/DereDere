@@ -6,9 +6,19 @@ namespace Com.DEREDERE.System {
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance {get; private set;}
+        public DungeonController dungeon;
 
         void Awake() {
             Instance = this;
+        }
+        void Start() {
+            StartCoroutine(StartGame());
+        }
+
+        IEnumerator StartGame() {
+            yield return new WaitForSeconds(0.5f);
+
+            dungeon.OnStart();
         }
 
         void Update() {
