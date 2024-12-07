@@ -36,7 +36,6 @@ public class NodeData : MonoBehaviour
         DungeonController.Instance.nodes.Add(this);
 
         var txt = Instantiate(defaultData.weightText);
-        Debug.Log(weightTxt);
         txt.transform.SetParent(nodeIcon.transform);
         txt.transform.localPosition = Vector2.zero;
 

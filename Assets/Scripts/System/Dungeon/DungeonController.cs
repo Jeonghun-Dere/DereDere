@@ -12,6 +12,12 @@ public class DungeonController : MonoBehaviour
         Instance = this;
     }
 
+    public void StartGame() {
+        NodeData firstNode = nodes.Find((v)=>v.layer == 0);
+
+        currentNode = firstNode;
+    }
+
     // Update is called once per frame
     void Update()
     {

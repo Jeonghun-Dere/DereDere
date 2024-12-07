@@ -11,7 +11,7 @@ public class Player : EntityBase
     GameObject item;
     #endregion
     #region public values
-    public float moveSpeed, stopMove;
+    public float moveSpeed, stopMove, atkCool;
     public bool grounded, isMoving;
     public bool falled;
     public GameObject target;
@@ -19,22 +19,17 @@ public class Player : EntityBase
     #endregion
 
     #region Private values
-    private Rigidbody2D rb;
-    private SpriteRenderer render;
-    private Animator animator;
     Vector2 moveDelta, moveDeltaBefore;
     float moveTime;
     Vector2 itemOffset, targetPos;
     float angle;
     DamageArea atkArea;
+    [SerializeField]
+    GameObject muzzle;
     #endregion
 
-    void Awake()
+    void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        render = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
-
         itemOffset = item.transform.localPosition;
 
         atkArea = DamageArea.Init(transform, DamageAreaShape.FanShaped, 1.5f, 1.5f);
@@ -54,6 +49,14 @@ public class Player : EntityBase
             stopMove -= Time.deltaTime;
         } else {
             moveDelta = Vector2.up * v + Vector2.right * h;
+        }
+
+        if (atkCool > 0) {
+            atkCool -= Time.deltaTime;
+
+            atkArea.BecomeRed(true);
+        } else {
+            atkArea.BecomeRed(false);
         }
 
         isMoving = moveDelta.x + moveDelta.y != 0;
@@ -94,7 +97,7 @@ public class Player : EntityBase
         targetPos.x *= -1;
 
    	    angle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
-        item.transform.rotation = Quaternion.AngleAxis(render.flipX ? -angle : angle, Vector3.forward);
+        item.transform.rotation = Quaternion.AngleAxis((transform.localScale.z < 0) ? -angle : angle, Vector3.forward);
 
 
         if (Input.GetKeyDown(KeyCode.LeftShift)) {
@@ -110,12 +113,30 @@ public class Player : EntityBase
         }
     }
 
+    void ShowMuzzle() {
+        Vector3 scale = new Vector3(1f, 1.5f, transform.localScale.z);
+        muzzle.SetActive(true);
+
+        muzzle.transform.SetParent(atkArea.rot.transform);
+
+        muzzle.transform.localPosition = new Vector3(0, 0.8f);
+        muzzle.transform.localRotation = Quaternion.Euler(0, 0, 90);
+
+        muzzle.transform.localScale = scale * 0.8f;
+
+        LeanTween.scale(muzzle, scale * 1.25f, 0.1f).setEaseInCubic();
+    }
+
     public void Attack(){
         atkArea.Hide();
         StartCoroutine(atkEffect());
     }
 
     IEnumerator atkEffect() {
+        if (atkCool > 0) {
+            yield break;
+        }
+
         LeanTween.moveLocal(item, itemOffset + new Vector2(0.25f * transform.localScale.x, 0.05f), 0.25f).setEasePunch();
         LeanTween.scale(item, Vector2.one * 0.44f, 0.1f).setEaseInCubic();
 
@@ -123,12 +144,24 @@ public class Player : EntityBase
 
         stopMove = 0.3f;
 
+        ShowMuzzle();
+
         yield return new WaitForSeconds(0.1f);
 
         CamManager.main.Shake(0.8f, 0.3f);
 
+        foreach (EntityBase entity in atkArea.casted) {
+            entity.Hurt(10, this);
+        }
+
         // LeanTween.moveLocal(item, itemOffset, 0.1f);
         LeanTween.scale(item, Vector2.one * 0.4f, 0.1f);
+
+        atkCool = 0.3f;
+
+        yield return new WaitForSeconds(0.1f);
+
+        muzzle.SetActive(false);
     }
 
     void Dash() {
@@ -148,5 +181,9 @@ public class Player : EntityBase
         if (col.tag == "ground") {
             falled = true;
         }
+    }
+
+    public override void OnDeath(EntityBase attacker)
+    {
     }
 }
