@@ -172,6 +172,10 @@ PrefabInstance:
       value: Node8
       objectReference: {fileID: 0}
     - target: {fileID: 9109922256280564223, guid: a0d7d8eca8c47004494084deecba5c7c, type: 3}
+      propertyPath: final
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9109922256280564223, guid: a0d7d8eca8c47004494084deecba5c7c, type: 3}
       propertyPath: layer
       value: 3
       objectReference: {fileID: 0}

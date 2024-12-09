@@ -32,6 +32,7 @@ public class DungeonController : MonoBehaviour
         NodeData node = currentNode.Next;
 
         if (node.final) {
+            ended = true;
             yield break;
         }
 

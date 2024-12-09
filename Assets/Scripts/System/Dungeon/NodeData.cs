@@ -62,6 +62,7 @@ public class NodeData : MonoBehaviour
             if (Player.Local.transform.position.x > min.x && Player.Local.transform.position.y > min.y &&
                 Player.Local.transform.position.x < max.x && Player.Local.transform.position.y < max.y) {
                     nodeIcon.sprite = defaultData.ActiveNode;
+                    Child[0].nodeIcon.material = defMat;
 
                     activated = true;
             } else {
