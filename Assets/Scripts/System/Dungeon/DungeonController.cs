@@ -65,6 +65,8 @@ public class DungeonController : MonoBehaviour
                 for (int i = 0; i < count; i++) {
                     var mob = Instantiate(monster.monster, (Vector2)currentNode.transform.position + monster.spawnOffset, Quaternion.identity);
 
+                    mob.transform.SetParent(currentNode.transform);
+
                     mob.onDeath = OnDeathEnemy;
 
                     spawnedMob.Add(mob);

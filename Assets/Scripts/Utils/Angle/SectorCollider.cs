@@ -20,7 +20,7 @@ public class SectorCollider : MonoBehaviour
     public LayerMask obstacleLayer;
 
     [Header("Debug")] 
-    public bool showDebug = true;
+    public bool showDebug = false;
     public bool show = false;
     
     

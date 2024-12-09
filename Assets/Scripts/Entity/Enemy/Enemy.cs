@@ -30,6 +30,8 @@ public class Enemy : EntityBase
     private void FixedUpdate() {
         float dist = Vector2.Distance(transform.position, Player.Local.transform.position);
 
+        bool isMoving = false;
+
         if (dist < followMax) {
             if (dist < followMin) {
                 if (atkDelay > attackDelay) {
@@ -45,8 +47,12 @@ public class Enemy : EntityBase
                     startFollowing += Time.deltaTime;
                 }
                 transform.position = Vector2.MoveTowards(transform.position, Player.Local.transform.position, Time.deltaTime * moveSpeed * startFollowing);
+
+                isMoving = true;
             }
         }
+
+        animator.SetBool("isMoving", isMoving);
     }
 
     void LateUpdate() {
@@ -63,6 +69,8 @@ public class Enemy : EntityBase
 
     void Attack(EntityBase target) {
         target.Hurt(attackDamage, this);
+
+        animator.SetTrigger("attack");
     }
     public override void OnDeath(EntityBase attacker)
     {
@@ -72,6 +80,8 @@ public class Enemy : EntityBase
             player.kill++;
         }
         isDeath = true;
+
+        animator.SetBool("isDeath", true);
 
         if (onDeath != null) {
             onDeath(this);

@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using Com.DEREDERE.System;
 using UnityEngine;
 
+public enum PlayerWeapon {
+    ShotGun,
+    Rifle
+}
 public class Player : EntityBase
 {
     public static Player Local {get; private set;}
     #region Item
     [SerializeField]
     GameObject item;
+    SpriteRenderer itemRender;
     #endregion
     #region public values
     public float moveSpeed, stopMove, atkCool;
@@ -16,6 +21,7 @@ public class Player : EntityBase
     public bool falled;
     public GameObject target;
     public int weight, kill;
+    public PlayerWeapon weapon;
     #endregion
 
     #region Private values
@@ -27,12 +33,18 @@ public class Player : EntityBase
     [SerializeField]
     GameObject muzzle;
     #endregion
-
     Cooldown dashCool = new(0.4f);
+
+    [SerializeField]
+    Sprite shotgun, rifle;
+    [SerializeField]
+    Projectile bullet;
+    int atkDamage = 5;
 
     void Start()
     {
         itemOffset = item.transform.localPosition;
+        itemRender = item.GetComponent<SpriteRenderer>();
 
         atkArea = DamageArea.Init(transform, DamageAreaShape.FanShaped, 1.5f, 1.5f);
         atkArea.center = new Vector3(0, -1);
@@ -110,8 +122,21 @@ public class Player : EntityBase
             atkArea.Show();
         }
 
+        if (Input.GetMouseButtonDown(1)) {
+            ChangeWeapon();
+        }
+
         if (Input.GetMouseButtonUp(0)) {
-            Attack();
+            atkArea.Hide();
+            if (weapon == PlayerWeapon.ShotGun) {
+                Attack();
+            }
+        }
+
+        if (Input.GetMouseButton(0)) {
+            if (weapon == PlayerWeapon.Rifle) {
+                Attack();
+            }
         }
     }
 
@@ -130,8 +155,19 @@ public class Player : EntityBase
     }
 
     public void Attack(){
-        atkArea.Hide();
         StartCoroutine(atkEffect());
+    }
+
+    public void ChangeWeapon() {
+        if (weapon == PlayerWeapon.ShotGun) {
+            weapon = PlayerWeapon.Rifle;
+
+            itemRender.sprite = rifle;
+        } else {
+            weapon = PlayerWeapon.ShotGun;
+
+            itemRender.sprite = shotgun;
+        }
     }
 
     IEnumerator atkEffect() {
@@ -144,16 +180,14 @@ public class Player : EntityBase
 
         CamManager.main.Shake(6);
 
-        stopMove = 0.3f;
-
         ShowMuzzle();
 
         yield return new WaitForSeconds(0.1f);
 
-        CamManager.main.Shake(0.8f, 0.3f);
-
-        foreach (EntityBase entity in atkArea.casted) {
-            entity.Hurt(10, this);
+        if (weapon == PlayerWeapon.ShotGun) {
+            AtkShotGun();
+        } else {
+            AtkRifle();
         }
 
         // LeanTween.moveLocal(item, itemOffset, 0.1f);
@@ -164,6 +198,33 @@ public class Player : EntityBase
         yield return new WaitForSeconds(0.1f);
 
         muzzle.SetActive(false);
+    }
+
+    void AtkRifle() {
+        var pj = Instantiate(bullet, muzzle.transform.position, muzzle.transform.rotation);
+
+        pj.LifeTime = 3;
+
+        // pj.transform.rotation = leftArea.rot.rotation;
+        
+        Vector3 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+        
+
+        pj.rb.AddForce(dir * 8, ForceMode2D.Impulse);
+    }
+
+    void AtkShotGun() {
+        CamManager.main.Shake(0.8f, 0.3f);
+
+        stopMove = 0.3f;
+
+        foreach (EntityBase entity in atkArea.casted) {
+            float dist = 4 - Vector2.Distance(entity.transform.position, transform.position);
+
+            if (dist < 1) dist = 1;
+
+            entity.Hurt((int)(atkDamage * dist), this);
+        }
     }
 
     void Dash() {

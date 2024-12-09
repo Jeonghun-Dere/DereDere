@@ -74,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1961588651
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: df6012f5cd4bbdd40bb5e9002c059540, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 6077821751810916992}
   - component: {fileID: 9081035481568757006}
   - component: {fileID: 2684212316879580107}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -299,7 +299,12 @@ MonoBehaviour:
   falled: 0
   target: {fileID: 0}
   weight: 0
+  kill: 0
+  weapon: 0
   muzzle: {fileID: 1742107097251746544}
+  shotgun: {fileID: 21300000, guid: 75854cfa223e2d54e9a8cfee8b465ce2, type: 3}
+  rifle: {fileID: 21300000, guid: edb35a039c68d3542a049da5b91e3a72, type: 3}
+  bullet: {fileID: 0}
 --- !u!1 &4436748602956347985
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,7 +379,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1961588651
-  m_SortingLayer: 7
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 75854cfa223e2d54e9a8cfee8b465ce2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

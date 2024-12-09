@@ -5,16 +5,17 @@ TagManager:
   serializedVersion: 3
   tags:
   - ground
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - player
   - Water
   - UI
   - marker
-  - 
-  - 
+  - bullet
+  - enemy
   - 
   - 
   - 
@@ -59,6 +60,9 @@ TagManager:
     locked: 0
   - name: damageArea
     uniqueID: 633678663
+    locked: 0
+  - name: particle
+    uniqueID: 1222644203
     locked: 0
   - name: item
     uniqueID: 2333378645
