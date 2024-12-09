@@ -485,7 +485,7 @@ MonoBehaviour:
   isDeath: 0
   health: 60
   maxHealth: 60
-  weightRangeMin: -5
+  weightRangeMin: -10
   weihtRangeMax: 10
   weight: 0
   HP: {fileID: 3898807933516755612}

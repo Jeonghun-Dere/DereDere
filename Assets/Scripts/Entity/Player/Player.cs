@@ -34,12 +34,16 @@ public class Player : EntityBase
     GameObject muzzle;
     #endregion
     Cooldown dashCool = new(0.4f);
+    Cooldown shotCool = new(0.4f);
+    Cooldown rifleCool = new(0.2f);
 
     [SerializeField]
     Sprite shotgun, rifle;
     [SerializeField]
     Projectile bullet;
     int atkDamage = 5;
+
+    public float fallTime;
 
     void Start()
     {
@@ -93,10 +97,12 @@ public class Player : EntityBase
         }
 
         if (falled) {
+            fallTime += Time.deltaTime;
             rb.gravityScale = 2;
             render.sortingLayerName = "playerFall";
 
         } else {
+            fallTime = 0;
             rb.gravityScale = 0;
             render.sortingLayerName = "player";
         }
@@ -135,7 +141,7 @@ public class Player : EntityBase
 
         if (Input.GetMouseButton(0)) {
             if (weapon == PlayerWeapon.Rifle) {
-                Attack();
+                AtkRifle();
             }
         }
     }
@@ -155,7 +161,58 @@ public class Player : EntityBase
     }
 
     public void Attack(){
+        if (shotCool.IsIn()) {
+            return;
+        }
+        shotCool.Start();
         StartCoroutine(atkEffect());
+
+        CamManager.main.Shake(0.8f, 0.3f);
+
+        stopMove = 0.3f;
+
+        foreach (EntityBase entity in atkArea.casted) {
+            float dist = 4 - Vector2.Distance(entity.transform.position, transform.position);
+
+            if (dist < 1) dist = 1;
+
+            entity.Hurt((int)(atkDamage * dist * 1.5f), this);
+        }
+    }
+
+    public void AtkRifle(){
+        if (rifleCool.IsIn()) {
+            return;
+        }
+        StartCoroutine(atkEffect2());
+
+        CamManager.main.Shake(0.2f);
+
+        rifleCool.Start();
+        var pj = Instantiate(bullet, transform.position + new Vector3(0, -1, 0), muzzle.transform.rotation);
+
+        pj.LifeTime = 1;
+
+        // pj.transform.rotation = leftArea.rot.rotation;
+        
+        Vector3 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
+        
+
+        pj.rb.AddForce(dir * 20, ForceMode2D.Impulse);
+
+        pj.OnHit = bulletOnHit;
+    }
+
+    void bulletOnHit(Transform target, Projectile pj) {
+        var entity = target.GetComponent<EntityBase>();
+
+        if (entity != null) {
+            entity.Hurt(atkDamage / 3, this);
+
+            CamManager.main.Shake(0.6f, 0.2f);
+        }
+
+        Destroy(pj.gameObject);
     }
 
     public void ChangeWeapon() {
@@ -178,17 +235,9 @@ public class Player : EntityBase
         LeanTween.moveLocal(item, itemOffset + new Vector2(0.25f * transform.localScale.x, 0.05f), 0.25f).setEasePunch();
         LeanTween.scale(item, Vector2.one * 0.44f, 0.1f).setEaseInCubic();
 
-        CamManager.main.Shake(6);
-
         ShowMuzzle();
 
         yield return new WaitForSeconds(0.1f);
-
-        if (weapon == PlayerWeapon.ShotGun) {
-            AtkShotGun();
-        } else {
-            AtkRifle();
-        }
 
         // LeanTween.moveLocal(item, itemOffset, 0.1f);
         LeanTween.scale(item, Vector2.one * 0.4f, 0.1f);
@@ -200,31 +249,26 @@ public class Player : EntityBase
         muzzle.SetActive(false);
     }
 
-    void AtkRifle() {
-        var pj = Instantiate(bullet, muzzle.transform.position, muzzle.transform.rotation);
-
-        pj.LifeTime = 3;
-
-        // pj.transform.rotation = leftArea.rot.rotation;
-        
-        Vector3 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized;
-        
-
-        pj.rb.AddForce(dir * 8, ForceMode2D.Impulse);
-    }
-
-    void AtkShotGun() {
-        CamManager.main.Shake(0.8f, 0.3f);
-
-        stopMove = 0.3f;
-
-        foreach (EntityBase entity in atkArea.casted) {
-            float dist = 4 - Vector2.Distance(entity.transform.position, transform.position);
-
-            if (dist < 1) dist = 1;
-
-            entity.Hurt((int)(atkDamage * dist), this);
+    IEnumerator atkEffect2() {
+        if (atkCool > 0) {
+            yield break;
         }
+
+        LeanTween.moveLocal(item, itemOffset + new Vector2(0.25f * transform.localScale.x, 0.05f), 0.25f).setEasePunch();
+        LeanTween.scale(item, Vector2.one * 0.44f, 0.05f).setEaseInCubic();
+
+        ShowMuzzle();
+
+        yield return new WaitForSeconds(0.05f);
+
+        // LeanTween.moveLocal(item, itemOffset, 0.1f);
+        LeanTween.scale(item, Vector2.one * 0.4f, 0.05f);
+
+        atkCool = 0.3f;
+
+        yield return new WaitForSeconds(0.05f);
+
+        muzzle.SetActive(false);
     }
 
     void Dash() {

@@ -11,7 +11,7 @@ public class DungeonController : MonoBehaviour
     LinkedList<MonsterData> UnspawnedMob = new();
     List<MonsterData> UnSpawnedDelete = new();
     float afterWave;
-    public bool inWave;
+    public bool inWave, ended;
     void Awake()
     {
         Instance = this;
@@ -30,6 +30,10 @@ public class DungeonController : MonoBehaviour
     IEnumerator nextRound() {
         inWave = false;
         NodeData node = currentNode.Next;
+
+        if (node.final) {
+            yield break;
+        }
 
         yield return new WaitForSeconds(1f);
 

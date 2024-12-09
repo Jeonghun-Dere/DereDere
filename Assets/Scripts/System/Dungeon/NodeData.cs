@@ -29,6 +29,7 @@ public class NodeData : MonoBehaviour
     Text weightTxt;
     public List<NodeData> Child;
     public Material defMat;
+    public bool final;
 
     bool activated;
 
